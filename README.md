@@ -28,4 +28,4 @@ Tokeny i dane dostępowe przechowywane lokalnie, poza repozytorium.
 Pobrane dane nie są udostępniane osobom trzecim.
 
 ## Kontakt
-potocznybartek5@gmail.com
+henioszrub@gmail.com

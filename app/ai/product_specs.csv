@@ -1,0 +1,15 @@
+grupa;produkt;marka;model;cechy;zestaw
+projektor;Projektor;Magcubic;L018;rozdzielczość natywna 1080p (Full HD), obsługa 4K, 650 ANSI, Android TV, WiFi, Bluetooth, głośnik, aplikacja Netflix, obrotowa konstrukcja;
+booster;Urządzenie rozruchowe (booster, jump starter);;;12V, 2000A, 5w1, funkcja powerbanku;kable rozruchowe, ładowarka, instrukcja PL
+x11;Odkurzacz pionowy bezprzewodowy;Laresar;X11;550W, 55 kPa (55000 Pa), do 60 min pracy, 3x filtr HEPA, LED, szczotka turbo, wymienna bateria;
+m3;Odkurzacz myjący (mop) bezprzewodowy;Laresar;M3;2w1 mokro/sucho, do 55 min pracy, filtr HEPA, baza samoczyszcząca;
+v7;Odkurzacz pionowy bezprzewodowy;Laresar;V7;500W, 50 kPa (50000 Pa), do 60 min pracy, 2x filtr HEPA, LED, funkcja odkurzacza ręcznego;
+v11;Odkurzacz pionowy bezprzewodowy;Laresar;V11;650W, 75 kPa, LED;2 baterie, filtry HEPA
+bat_x11;Bateria (akumulator) do odkurzacza;Laresar;X11;21,6V, 2500mAh, oryginalna, wymienna;
+bat_v7;Bateria (akumulator) do odkurzacza;Laresar;V7;2500mAh, oryginalna, wymienna;
+bat_v11;Bateria (akumulator) do odkurzacza;Laresar;V11;25,9V, 2500mAh, wymienna;
+parkside;Pilarka łańcuchowa akumulatorowa;Parkside;PAGHS 20-Li B2;20V;akumulator, ładowarka
+karcher;Odkurzacz przemysłowy;Karcher;WD 2 Plus;1000W, zbiornik 12L, mokro/sucho;5 worków
+philips;Golarka damska do depilacji intymnej;Philips;OneBlade Intimate QP1924/22;;
+obrotowy_hepa;Odkurzacz pionowy bezprzewodowy;;;obrotowa szczotka, 3x filtr HEPA;akcesoria
+reczny_hepa;Odkurzacz pionowy i ręczny akumulatorowy;;;filtr HEPA;akcesoria

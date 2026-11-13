@@ -1,6 +1,25 @@
+# sekrety i konfiguracja lokalna
 .env
+
+# srodowisko Pythona
 venv/
 __pycache__/
+*.pyc
+
+# dane i kopie bazy (dane osobowe, dane sprzedazowe)
 data/
-*.pdf
 dump.sql
+*.dump
+
+# dokumenty i faktury
+faktury/
+*.pdf
+
+# pliki robocze / narzedzia
+CLAUDE.md
+ai_log.md
+Claude outputs/
+wynik_*.txt
+.vscode/
+.DS_Store
+Thumbs.db

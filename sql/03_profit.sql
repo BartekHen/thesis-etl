@@ -38,4 +38,5 @@ FROM customer_order co
 CROSS JOIN params p
 LEFT JOIN items i  ON i.order_id  = co.order_id
 LEFT JOIN fees  fe ON fe.order_id = co.order_id
-WHERE co.status <> 'CANCELLED';
+-- statusy anulowania: Allegro 'CANCELLED', Empik/Mirakl 'CANCELED' i 'REFUSED'
+WHERE co.status NOT IN ('CANCELLED', 'CANCELED', 'REFUSED');

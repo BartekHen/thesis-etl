@@ -1,26 +1,54 @@
+import csv
+import os
 import re
+from pathlib import Path
 from sqlalchemy import text
 from app.db import get_engine
 
-# koszt zakupu 1 szt., netto, zl
-# projektor, booster, x11, m3, v7, v11, baterie, s7_pro, carplay, mata: srednia wazona z faktur AliExpress
-# (12.2025-01.2026, 06.2026; po kuponach, z wysylka) - faktury/srednie_koszty_aliexpress.csv
-COSTS = {
-    "projektor": 217, "booster": 181, "x11": 303, "m3": 444,
-    "v7": 246, "v11": 351, "bat_x11": 124, "bat_v7": 142,
-    "bat_v11": 125, "parkside": 210, "karcher": 330, "philips": 80,
-    "obrotowy_hepa": 370, "reczny_hepa": 300,
-    # produkty z Empiku (13.11)
-    "s7_pro": 595, "carplay": 128, "fotel": 515,
-    "lezak": 200, "tunel": 159, "basen_305": 400, "basen_366": 700,
-    "hy300": 180, "frytkownica": 400,
-    # produkty z konta 2 Allegro
-    "silikon_af": 11, "szczypce": 8, "finish_100": 45, "finish_2x100": 90,
-    "wozek": 104, "allpowers": 590, "praska": 9, "mata": 205,
-}
+# koszt zakupu 1 szt., netto, zl - wartosci w pliku poza repozytorium (data/koszty.csv,
+# kolumny: grupa;koszt_netto). Wzor formatu: app/costs/koszty.example.csv.
+# Zrodla kosztow: sredni koszt z faktur AliExpress (po kuponach, z wysylka),
+# mediana z polskich faktur zakupowych, szacunek lub deklaracja wlasciciela.
+COSTS_FILE = Path(os.getenv("COSTS_FILE", "data/koszty.csv"))
+
+
+def load_costs(path=COSTS_FILE):
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Brak pliku kosztow: {path}. Skopiuj app/costs/koszty.example.csv "
+            f"do {path} i uzupelnij kolumne koszt_netto.")
+    with open(path, encoding="utf-8", newline="") as f:
+        return {r["grupa"]: float(r["koszt_netto"])
+                for r in csv.DictReader(f, delimiter=";")}
+
+
+COSTS = load_costs()
 
 # grupy bez znanego kosztu: koszt = srednia cena sprzedazy netto (zysk na towarze 0)
 BREAK_EVEN = {"papier_af", "kabel"}
+
+# grupy, ktorych koszt to srednia wazona z faktur AliExpress
+INVOICE_GROUPS = {"projektor", "booster", "x11", "m3", "v7", "v11", "bat_x11",
+                  "bat_v7", "bat_v11", "s7_pro", "carplay", "mata"}
+
+# grupy, ktorych koszt to mediana netto z polskich faktur zakupowych (faktury/zakupowe)
+PL_INVOICE_GROUPS = {"hy300", "philips", "frytkownica", "frytkownica_hd9270",
+                     "basen_305", "basen_366", "tunel"}
+
+# parkside: szacunek z faktur (zestaw kupowany w calosci lub skladany z czesci)
+ESTIMATE_GROUPS = {"parkside"}
+
+
+def cost_source(group):
+    if group in INVOICE_GROUPS:
+        return "faktury_aliexpress"
+    if group in PL_INVOICE_GROUPS:
+        return "faktury_pl"
+    if group in ESTIMATE_GROUPS:
+        return "szacunek_z_faktur"
+    if group in BREAK_EVEN:
+        return "break_even"
+    return "deklaracja"
 
 # produkty bez kodu modelu w nazwie, przypisane recznie
 SPECIAL = {
@@ -64,10 +92,12 @@ def classify(key):
         return "hy300"
     if "projektor" in key:
         return "projektor"
-    if "parkside" in key or "paghs" in key:   # B2 i C3; 210 = zestaw (pila ~145 + akumulator, ladowarka)
+    if "parkside" in key or "paghs" in key:   # modele B2 i C3; koszt jako zestaw (pila + akumulator + ladowarka)
         return "parkside"
     if "karcher" in key:
         return "karcher"
+    if "hd9270" in key:                       # frytkownica Philips HD9270 (tansza niz NA352)
+        return "frytkownica_hd9270"
     if "frytkownica" in key or "airfryer" in key:   # przed "philips" (golarka)
         return "frytkownica"
     if "philips" in key:
@@ -114,11 +144,13 @@ def run():
                 continue
             cost = break_even_cost(c, k) if g in BREAK_EVEN else COSTS[g]
             c.execute(text("""
-                INSERT INTO product_cost (product_key, unit_cost_net)
-                VALUES (:k, :u)
+                INSERT INTO product_cost (product_key, unit_cost_net, product_group, cost_source)
+                VALUES (:k, :u, :g, :s)
                 ON CONFLICT (product_key) DO UPDATE
-                SET unit_cost_net = EXCLUDED.unit_cost_net
-            """), {"k": k, "u": cost})
+                SET unit_cost_net = EXCLUDED.unit_cost_net,
+                    product_group = EXCLUDED.product_group,
+                    cost_source   = EXCLUDED.cost_source
+            """), {"k": k, "u": cost, "g": g, "s": cost_source(g)})
             ok += 1
     print("Przypisano kosztow:", ok)
     print("Bez kosztu:", len(skipped))

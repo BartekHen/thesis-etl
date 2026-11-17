@@ -1,3 +1,6 @@
+-- Schemat bazy (uruchamiany automatycznie przy pierwszym starcie kontenera, docker-compose: sql/init)
+-- Kolejne kroki recznie: sql/02_fee_groups.sql (po fee_types), sql/03_profit.sql, sql/05_item_profit.sql
+
 CREATE TABLE channel (
     channel_id   bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     platform     text NOT NULL,
@@ -84,6 +87,42 @@ CREATE TABLE etl_run (
     error       text
 );
 
+-- typy oplat Allegro (slownik z /billing/billing-types) + grupa do analizy (sql/02_fee_groups.sql)
+CREATE TABLE fee_type (
+    type_id     text PRIMARY KEY,
+    name        text,
+    raw_payload jsonb,
+    fee_group   text
+);
+
+-- koszt zakupu netto za sztuke; klucz = lower(trim(order_item.name)); wypelnia app/costs/assign_costs.py
+CREATE TABLE product_cost (
+    product_key   text PRIMARY KEY,
+    unit_cost_net numeric(12,2) NOT NULL,
+    vat_rate      numeric(4,2) NOT NULL DEFAULT 0.23,
+    product_group text,
+    cost_source   text
+);
+
+-- tresci wygenerowane przez GenAI (app/ai/titles.py, app/ai/descriptions.py)
+CREATE TABLE ai_content (
+    content_id               bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    channel_id               bigint REFERENCES channel,
+    source_offer_external_id text,
+    content_type             text NOT NULL,
+    original_text            text,
+    generated_text           text,
+    char_count               integer,
+    attempts                 integer,
+    model                    text,
+    prompt_version           text,
+    status                   text NOT NULL DEFAULT 'draft',
+    tokens_in                integer,
+    tokens_out               integer,
+    created_at               timestamptz NOT NULL DEFAULT now()
+);
+
 INSERT INTO channel (platform, account_name) VALUES
  ('allegro', 'konto_1'),
- ('allegro', 'konto_2');
+ ('allegro', 'konto_2'),
+ ('empik',   'wholeshop');

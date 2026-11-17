@@ -7,11 +7,7 @@ Uruchomienie: python -m app.costs.profit_by_group
 from collections import defaultdict
 from sqlalchemy import text
 from app.db import get_engine
-from app.costs.assign_costs import classify
-
-# grupy, ktorych koszt pochodzi ze sredniej z faktur AliExpress
-ALI = {"projektor", "booster", "x11", "m3", "v7", "v11", "bat_x11", "bat_v7",
-       "bat_v11", "s7_pro", "carplay", "mata"}
+from app.costs.assign_costs import classify, cost_source
 
 SQL = """
 WITH it AS (
@@ -39,17 +35,18 @@ def run():
             row[0] += q
             row[1] += float(rev or 0)
             row[2] += float(rmf or 0) - float(cogs or 0)
-    tot = {"ali": [0, 0.0, 0.0], "inne": [0, 0.0, 0.0]}
-    print(f"{'grupa':16}{'zrodlo':>7}{'szt':>6}{'przychod':>11}{'zysk':>10}{'marza':>8}")
+    tot = {}
+    print(f"{'grupa':20}{'zrodlo':>20}{'szt':>6}{'przychod':>11}{'zysk':>10}{'marza':>8}")
     for grp, (q, rev, prof) in sorted(g.items(), key=lambda x: -x[1][2]):
-        src = "ali" if grp in ALI else "inne"
+        src = cost_source(grp)
+        t = tot.setdefault(src, [0, 0.0, 0.0])
         for i, v in enumerate((q, rev, prof)):
-            tot[src][i] += v
+            t[i] += v
         m = 100 * prof / rev if rev else 0
-        print(f"{grp:16}{src:>7}{q:>6}{rev:>11.0f}{prof:>10.0f}{m:>7.1f}%")
-    print("-" * 58)
-    for src, (q, rev, prof) in tot.items():
-        print(f"{'RAZEM ' + src:16}{'':>7}{q:>6}{rev:>11.0f}{prof:>10.0f}{100 * prof / rev:>7.1f}%")
+        print(f"{grp:20}{src:>20}{q:>6}{rev:>11.0f}{prof:>10.0f}{m:>7.1f}%")
+    print("-" * 75)
+    for src, (q, rev, prof) in sorted(tot.items(), key=lambda x: -x[1][2]):
+        print(f"{'RAZEM':20}{src:>20}{q:>6}{rev:>11.0f}{prof:>10.0f}{100 * prof / rev:>7.1f}%")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,7 @@
+# Zależności bezpośrednie projektu. Wersje należy utrwalić po testach w docelowym środowisku (python -m pip freeze).
+requests
+pandas
+SQLAlchemy
+psycopg2-binary
+python-dotenv
+google-genai

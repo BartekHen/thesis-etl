@@ -28,7 +28,9 @@ API Allegro / API Empik ──► ETL (Python) ──► PostgreSQL ──► wi
 | `app/auth.py` | autoryzacja Allegro (device flow), zapis i odświeżanie tokenów per kanał |
 | `app/http.py`, `app/db.py` | klient HTTP Allegro, połączenie z bazą |
 | `app/etl/` | ETL: `orders`, `offers`, `fees`, `fee_types` (Allegro), `empik_orders` (Empik) |
-| `app/costs/assign_costs.py` | przypisanie kosztów zakupu i grup produktów |
+| `app/costs/rules.py` | wczytanie regul grup produktow i kosztow z `data/produkty.csv` |
+| `app/costs/assign_costs.py` | przypisanie kosztów zakupu i grup produktów (tabela `product_cost`) |
+| `app/costs/migrate_rules.py` | jednorazowa migracja starych regul i `koszty.csv` do `produkty.csv` |
 | `app/costs/profit_by_group.py` | raport zysku per grupa produktów |
 | `app/ai/` | generowanie tytułów i opisów (Gemini), statystyki jakości |
 | `sql/init/01_schema.sql` | schemat bazy (uruchamiany przy pierwszym starcie kontenera) |
@@ -53,10 +55,12 @@ Wymagania: Docker, Python 3, konto deweloperskie Allegro, klucz API Empik, klucz
    ```
    python -m venv venv
    .\venv\Scripts\Activate.ps1
-   pip install requests pandas sqlalchemy psycopg2-binary python-dotenv google-genai
+   pip install -r requirements.txt
    ```
-4. Koszty zakupu: skopiuj `app/costs/koszty.example.csv` do `data/koszty.csv` (folder `data/` nie jest w repozytorium)
-   i uzupelnij kolumne `koszt_netto` (zl za 1 szt., netto) dla kazdej grupy produktow.
+4. Produkty i koszty zakupu: skopiuj `app/costs/produkty.example.csv` do `data/produkty.csv`
+   (folder `data/` nie jest w repozytorium) i uzupelnij `koszt_netto` (zl za 1 szt., netto) dla kazdej grupy.
+   Plik zawiera tez reguly przypisania nazw ofert do grup (kolumny `wzorzec`, `wyklucz`, `priorytet`,
+   skladnia w `app/costs/rules.py`); nowy produkt = nowy wiersz, bez zmian w kodzie.
 5. Autoryzacja kont Allegro (raz na konto, w przeglądarce): `python -m app.auth --channel 1`
 6. ETL (dla każdego kanału Allegro):
    ```

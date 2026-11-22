@@ -1,0 +1,40 @@
+﻿# Wzorzec pliku regul produktow (kolumny i skladnia: app/costs/rules.py)
+# Skopiuj do data/produkty.csv i wpisz kwoty w kolumnie koszt_netto.
+grupa;wzorzec;wyklucz;priorytet;zrodlo_kosztu;koszt_netto
+allpowers;allpowers;;150;deklaracja;0.00
+basen_305;basen & 305;;320;faktury_pl;0.00
+basen_366;basen & 366;;310;faktury_pl;0.00
+bat_v11;^(wydajna )?bateria & \bv11\b;;70;faktury_aliexpress;0.00
+bat_v7;^(wydajna )?bateria & \bv7\b;;60;faktury_aliexpress;0.00
+bat_x11;^(wydajna )?bateria & \bx11\b;;50;faktury_aliexpress;0.00
+booster;booster;;190;faktury_aliexpress;0.00
+carplay;carplay;;280;faktury_aliexpress;0.00
+finish_100;finish;;130;deklaracja;0.00
+finish_2x100;finish & 2x100;;120;deklaracja;0.00
+fotel;fotel & kokon|wisz;;330;deklaracja;0.00
+frytkownica;frytkownica|airfryer;;250;faktury_pl;0.00
+frytkownica_hd9270;hd9270;;240;faktury_pl;0.00
+hy300;hy300;;200;faktury_pl;0.00
+kabel;kabel & usb-c;;160;break_even;
+karcher;karcher;;230;deklaracja;0.00
+lezak;leżak|lezak;;290;deklaracja;0.00
+m3;\bm3\b;;340;faktury_aliexpress;0.00
+mata;mata masująca|mata masujaca;;180;faktury_aliexpress;0.00
+obrotowy_hepa;^odkurzacz bezprzewodowy pionowy mocny obrotowy filtr hepa x3 akcesoria$;;10;deklaracja;0.00
+papier_af;papier & fryer|frytkownic;;100;break_even;
+parkside;parkside|paghs;;220;szacunek_z_faktur;0.00
+philips;philips;;260;faktury_pl;0.00
+praska;praska;;170;deklaracja;0.00
+projektor;projektor;;210;faktury_aliexpress;0.00
+reczny_hepa;^mocny odkurzacz pionowy ręczny akumulatorowy bezprzewodowy hepa akcesoria$;;20;deklaracja;0.00
+s7_pro;\bs7 pro\b;;270;faktury_aliexpress;0.00
+silikon_af;silikon & fryer|frytkownic;;110;deklaracja;0.00
+szczypce;szczypce;;90;deklaracja;0.00
+tunel;tunel foliowy|szklarnia;;300;faktury_pl;0.00
+v11;\bv11\b;;360;faktury_aliexpress;0.00
+v7;\bv7\b;;370;faktury_aliexpress;0.00
+v7;^odkurzacz bezprzewodowy pionowy mocny 500w filtr hepa mocne ssanie laresar$;;30;;
+wozek;wózek|wozek;;140;deklaracja;0.00
+x11;\bx11\b;;350;faktury_aliexpress;0.00
+x11;^odkurzacz bezprzewodowy pionowy mocny 550w filtr hepa mocne ssanie laresar$;;40;;
+-;^(wydajna )?bateria;;80;;
